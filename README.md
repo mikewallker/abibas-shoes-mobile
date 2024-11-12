@@ -94,3 +94,111 @@ const dan final sama-sama immutable (tidak bisa diubah)
         •"Kamu telah menekan tombol Tambah Produk" ketika tombol Tambah Produk ditekan.
         •"Kamu telah menekan tombol Logout" ketika tombol Logout ditekan.
             -Pada widget dari ItemCard, tambahkan onTap di child, lalu atur ScaffoldMessenger untuk menampilkan pesan sesuai nama tombol yang ditekan, menggunakan ${item.name}
+
+
+**Tugas Individu 8
+- Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
+Const digunakan untuk mendeklarasikan objek atau widget yang tidak akan berubah setelah dibuat.
+
+Keuntungan menggunakan const:
+1. Mengurangi Penggunaan Memori:
+Karena objek const hanya dibuat sekali, penggunaan memori lebih efisien dibandingkan dengan membuat objek baru setiap kali diperlukan.
+
+2. Optimisasi Waktu Eksekusi:
+const memungkinkan Flutter melakukan optimisasi pada rendering dan re-building widget. Flutter akan memeriksa apakah objek yang sama digunakan berulang kali dan tidak perlu di-rebuild.
+
+3. Reusabilitas:
+Widget atau objek yang dideklarasikan sebagai const dapat digunakan berkali-kali tanpa proses tambahan, yang sangat membantu jika kita menggunakan widget yang sama di banyak tempat.
+
+4. Meminimalisir munculnya bug/error:
+Dengan mendeklarasikan sesuatu sebagai const, kita memastikan bahwa objek tersebut tidak akan diubah selama aplikasi berjalan, yang membantu menghindari bugs terkait perubahan yang tidak diinginkan.
+
+Kapan sebaiknya digunakan?
+Gunakan const ketika objek atau widget kita tidak berubah setelah pembuatan, seperti widget statis yang sering digunakan di aplikasi. Ini akan menghemat memori, meningkatkan performa, dan memastikan pengelolaan memori yang lebih efisien.
+
+Kapan sebaiknya tidak digunakan?
+Hindari const pada widget atau objek yang melibatkan perubahan dinamis atau interaksi pengguna, seperti widget yang bergantung pada state atau input yang berubah, karena ini bisa menyebabkan kesalahan atau kegagalan dalam pembaruan tampilan.
+
+- Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
+Di Flutter, Column dan Row adalah dua widget layout yang digunakan untuk menyusun widget lainnya dalam urutan vertikal  (column) dan horizontal (row). 
+Perbandingan penggunaan Column dan Row adalah pada Column, arah layoutnya Vertikal (atas ke bawah) dan umumnya penggunaannya untuk mengatur elemen-elemen yang berada di bawah satu sama lain (formulir, daftar vertikal). Sedangkan pada Row, arah layoutnya Horizontal (kiri ke kanan) dan umumnya penggunaannya untuk mengatur elemen-elemen yang berada di samping satu sama lain (tombol, ikon).
+
+Contoh penggunaan column:
+Column(
+  mainAxisAlignment: MainAxisAlignment.center, // Posisi vertikal tengah
+  crossAxisAlignment: CrossAxisAlignment.start, // Posisi horizontal kiri
+  children: <Widget>[
+    Text('Item 1'),
+    Text('Item 2'),
+    Text('Item 3'),
+  ],
+)
+
+Contoh penggunaan row:
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ruang antar widget
+  crossAxisAlignment: CrossAxisAlignment.center, // Posisi vertikal tengah
+  children: <Widget>[
+    Icon(Icons.star),
+    Text('Item 1'),
+    Icon(Icons.star),
+  ],
+)
+
+
+- Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
+Elemen Input yang Digunakan:
+1. TextFormField untuk "Name":
+Digunakan untuk menerima input teks berupa nama produk.
+
+2. TextFormField untuk "Price":
+Digunakan untuk menerima input harga produk. 
+
+3. TextFormField untuk "Description":
+Digunakan untuk menerima deskripsi produk.
+
+4. Radio untuk "Type":
+Digunakan untuk memilih jenis produk (hanya bisa memilih 1).
+
+5. Radio untuk "Materials":
+Digunakan untuk memilih jenis material produk (hanya bisa memilih 1).
+
+6. ElevatedButton untuk "Save":
+Digunakan untuk memproses data form dan menampilkan dialog jika form berhasil disubmit.
+Memiliki aksi onPressed yang akan memvalidasi form dan jika valid, menampilkan data dalam dialog.
+
+Elemen Input Flutter Lain yang Tidak Digunakan:
+1. Checkbox:
+Jika ingin menambahkan pilihan biner (misalnya, untuk memilih apakah produk dalam keadaan aktif atau tidak), Checkbox bisa digunakan.
+
+2. Switch:
+Untuk menggantikan checkbox dalam konteks pilihan on/off, Switch bisa digunakan, misalnya untuk menandai apakah produk sedang dalam diskon atau tidak.
+
+3. DropdownButton:
+Jika ingin menambahkan pilihan dari daftar (misalnya, kategori produk), elemen DropdownButton bisa digunakan sebagai alternatif dari TextFormField dengan input bebas.
+
+4. DatePicker:
+Jika form perlu memasukkan tanggal (misalnya, tanggal mulai atau berakhirnya diskon atau promo), DatePicker dari paket flutter_datetime_picker bisa digunakan untuk memilih tanggal dengan format yang benar.
+
+5. Slider:
+Jika ingin menambahkan input berupa rentang angka (misalnya, untuk memilih rating atau tingkat kepuasan), Slider bisa digunakan.
+
+6. TextField:
+Berbeda dengan TextFormField, TextField adalah widget input teks dasar tanpa validasi. Meskipun tidak sepopuler TextFormField yang lebih sering digunakan bersama dengan GlobalKey<FormState>, TextField tetap bisa digunakan jika validasi manual diperlukan.
+
+- Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
+Untuk membuat aplikasi Flutter yang konsisten, kita bisa menggunakan tema (theme) untuk menyatukan tampilan seluruh aplikasi. Tema memungkinkan kita untuk mengatur elemen-elemen UI seperti warna, font, ukuran teks, dan gaya elemen lainnya di seluruh aplikasi secara konsisten tanpa perlu mengubah setiap elemen UI secara manual. 
+
+Ya, saya menerapkan tema yaitu warna abu-abu di aplikasi saya yang ditunjukkan dengan potongan kode berikut
+colorScheme: ColorScheme.fromSwatch(
+        primarySwatch: Colors.grey,
+        ).copyWith(secondary: const Color.fromARGB(255, 92, 91, 88)),
+pada main.dart
+
+- Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
+1. Penggunaan Drawer untuk Navigasi
+Drawer adalah widget yang digunakan untuk menampilkan menu navigasi di sisi kiri layar (seperti menu samping). Di dalam aplikasi saya, terdapat Drawer yang berisi 2 tombol yaitu Halaman Utama dan Tambah Item yang akan mengarahkan ke halaman sesuai namanya.
+2. Navigasi Menggunakan Navigator.pushReplacement
+Pada setiap onTap dari ListTile pada Drawer, navigasi dilakukan menggunakan Navigator.pushReplacement. Metode ini berfungsi untuk menggantikan halaman saat ini dengan halaman baru, sehingga halaman sebelumnya tidak akan muncul dalam stack navigasi.
+3.  Navigasi Menggunakan Navigator.pushReplacement
+Pada onTap dari InkWell pada kartu tambah item, navigasi dilakukan menggunakan Navigator.push. Method push() menambahkan suatu route ke dalam stack route yang dikelola oleh Navigator. Method ini menyebabkan route yang ditambahkan berada pada paling atas stack, sehingga route yang baru saja ditambahkan tersebut akan muncul dan ditampilkan kepada pengguna.
