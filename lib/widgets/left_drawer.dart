@@ -1,3 +1,4 @@
+import 'package:abibas_shoes/screens/list_products.dart';
 import 'package:flutter/material.dart';
 import 'package:abibas_shoes/screens/menu.dart';
 import 'package:abibas_shoes/screens/product_form.dart';
@@ -58,10 +59,21 @@ class LeftDrawer extends StatelessWidget {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProductFormPage(),
+                      builder: (context) => const ProductFormPage(),
                     ));
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.production_quantity_limits),
+              title: const Text('Daftar Produk'),
+              onTap: () {
+                  // Route menu ke halaman mood
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ProductsPage()),
+                  );
+              },
+          ),
         ],
       ),
     );

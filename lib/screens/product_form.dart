@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:abibas_shoes/screens/menu.dart';
 import 'package:flutter/material.dart';
 // Impor drawer widget
 import 'package:abibas_shoes/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -24,6 +29,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -197,54 +204,49 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       _isFormSubmitted = true; // Mark form as submitted
                     });
 
                     if (_formKey.currentState!.validate()  && _type.isNotEmpty && _materials.isNotEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Item berhasil tersimpan'),
-                            content: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-
-                                //menampilkan isi dari form 
-                                children: [
-                                  Text('Name: $_name'),
-                                  Text('Price: $_price'),
-                                  Text('Description: $_description'),  
-                                  Text('Type: $_type'),  
-                                  Text('Materials: $_materials'),  
-                                ],
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  _formKey.currentState!.reset();
-                                  setState(() {
-                                    _type = ''; // Reset type
-                                    _materials = ''; // Reset materials
-                                    _isFormSubmitted = false; // Reset the submission flag
-                                  });
-                                },
-                              ),
-                            ],
-                          );
-                        },
+                      final response = await request.postJson(
+                        "http://localhost:8000/create-flutter/",
+                        jsonEncode(<String, String>{
+                            'name': _name,
+                            'price': _price.toString(),
+                            'description': _description,
+                            'type': _type,
+                            'materials': _materials,
+                        
+                        }),
                       );
+                      if (context.mounted) {
+                        if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                            content: Text("Produk baru berhasil disimpan!"),
+                            ));
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => MyHomePage()),
+                            );
+                        } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                                content:
+                                    Text("Terdapat kesalahan, silakan coba lagi."),
+                            ));
+                        }
                     }
-                  },
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                }
+                     
+                    },
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  
                 ),
               ),
             ),

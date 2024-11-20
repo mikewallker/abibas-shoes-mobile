@@ -202,3 +202,114 @@ Drawer adalah widget yang digunakan untuk menampilkan menu navigasi di sisi kiri
 Pada setiap onTap dari ListTile pada Drawer, navigasi dilakukan menggunakan Navigator.pushReplacement. Metode ini berfungsi untuk menggantikan halaman saat ini dengan halaman baru, sehingga halaman sebelumnya tidak akan muncul dalam stack navigasi.
 3.  Navigasi Menggunakan Navigator.pushReplacement
 Pada onTap dari InkWell pada kartu tambah item, navigasi dilakukan menggunakan Navigator.push. Method push() menambahkan suatu route ke dalam stack route yang dikelola oleh Navigator. Method ini menyebabkan route yang ditambahkan berada pada paling atas stack, sehingga route yang baru saja ditambahkan tersebut akan muncul dan ditampilkan kepada pengguna.
+
+**Tugas Individu 9
+ 
+ -Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
+ Model diperlukan untuk mengubah data JSON menjadi objek Dart yang terstruktur, memudahkan akses dan manipulasi data.  Tanpa model, kita akan bekerja dengan Map<String, dynamic> yang lebih rawan error dan kurang type-safe.
+ Memang tidak akan selalu error jika kita tidak membuat model model, tapi:
+1. Kode jadi lebih sulit dibaca dan dipelihara
+2. Tidak ada type checking saat compile time
+3. Lebih rawan typo saat mengakses properti
+4. Tidak ada autocomplete dari IDE
+
+Model juga memastikan data memiliki struktur yang konsisten dan memvalidasi data sesuai tipe yang diharapkan
+
+ -Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
+1.  Menyediakan fungsi untuk melakukan HTTP requests (GET, POST)
+2.  Menangani konversi data ke format yang sesuai
+3.  Mengelola headers dan cookies
+4.  Menangani response codes dan error handling
+5.  Mendukung async/await untuk operasi non-blocking
+
+ -Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+ CookieRequest menyimpan dan mengelola session cookies untuk autentikasi. Setiap request akan menyertakan session token yang disimpan di CookieRequest, sehingga Django bisa memvalidasi token ini untuk memastikan user sudah login sebelum mengizinkan akses ke protected endpoints.
+
+Instance perlu dibagikan (shared) karena:
+
+1. Memastikan konsistensi session di seluruh aplikasi
+2. Menghindari multiple login sessions
+3. Menghemat resources dengan menggunakan instance yang sama
+4. Memudahkan logout dengan satu titik kontrol
+
+ -Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
+ Secara umum, alurnya begini:
+ User input → Validasi form → Konversi ke JSON → Kirim ke Django → Proses di Django → Response ke Flutter → Update UI
+ Berikut penjelasan serta bagian kode yang bersesuaian
+ 1. user melakukan input dari form
+ final formKey = GlobalKey<FormState>();
+ TextEditingController nameController = TextEditingController();
+ 2. validasi dan konversi data
+ if (formKey.currentState!.validate()) {
+    final data = {
+        'name': nameController.text,
+        // ... data lainnya
+    };
+  3. kirim request ke django
+  final response = await request.post(
+        'http://localhost:8000/create-product/',
+        data
+    );
+  4. handle response dan update UI
+  if (response['status'] == 'success') {
+        // Update UI
+    }
+
+ -Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+
+- Register:
+1. User input data → Flutter form
+2. Data dikirim ke Django endpoint /register/
+3. Django create user baru
+4. Response success/error ke Flutter
+5. Flutter navigate ke login page
+
+- Login:
+1. User input credentials → Flutter form
+2. Data dikirim ke Django endpoint /login/
+3. Django autentikasi user
+4. Generate session token
+5. Kirim token ke Flutter
+6. Flutter simpan token di CookieRequest
+7. Navigate ke home page
+
+
+- Logout:
+1. User tap logout
+2. Request ke Django endpoint /logout/
+3. Django invalidate session
+4. Flutter clear CookieRequest
+5. Navigate ke login page
+Setiap request selanjutnya akan menyertakan session token yang disimpan di CookieRequest untuk autentikasi. Django akan memvalidasi token ini untuk memastikan user sudah login sebelum mengizinkan akses ke protected endpoints.
+
+ -Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+  -Mengimplementasikan fitur registrasi akun pada proyek tugas Flutter.
+   1. melakukan setup autentikasi seperti membuat app authentication, install django-cors-headers, dll.
+   2. tambahkan routing authentication pada proyek utama dengan menambah url /auth pada urls.py proyek utama
+   3. menambahkan metode view untuk register dan login pada authentication/views.py
+   4. tambahkan url routing dari metode yang baru saja dibuat pada authentication/urls.py
+   5. ubah redirect awal saat pertama kali membuka website dari home page menjadi login page
+  -Membuat halaman login pada proyek tugas Flutter.
+   1. buat login.dart dan register.dart
+  -Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+   1. install package yang diperlukan
+   2. menyediakan cookie request ke semua child widgets dengan modifikasi root widget
+   3. setiap kali tombol login dan register ditekan, mengirim request ke url untuk proses yang bersesuaian (login,register) dengan endpoint pada proyek django
+  -Membuat model kustom sesuai dengan proyek aplikasi Django.
+   1. membuat models yang didefinisikan pada lib/models/products.dart
+   2. menambah dependensi http di proyek flutter untuk bisa melakukan http request
+  -Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
+   -Tampilkan name, price, dan description dari masing-masing item pada halaman ini.
+   1. diimplementasikan pada file list_products.dart
+   2. melakukan fetch data dari endpoint json yang menampilkan semua produk yang bersesuaian dengan user yang logindengan await request dan menampilkannya
+  -Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
+   -Halaman ini dapat diakses dengan menekan salah satu item pada halaman daftar Item.
+   -Tampilkan seluruh atribut pada model item kamu pada halaman ini.
+   -Tambahkan tombol untuk kembali ke halaman daftar item.
+   1. diimplementasikan pada file product_detail_page.dart
+   2. melakukan fetch data dari endpoint json/idproduk yang menampilkan detail sebuah produk yang bersesuaian dengan yang ditekan user dengan await request dan menampilkannya
+   3. menambahkan widget onTap dan push untuk pergi ke page detail produk agar produk bisa ditekan dan dilihat detailnya.
+   4. menambahkan icon back untuk kembali, didalam block code tersebut menggunakan pop, sesuai karena sebelumnya kita menggunakan push ketika onTap card product.
+  -Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login.
+   1. tambahkan metode views create_product_flutter di main/views.py dan routing urlnya
+   2. mendapatkan user yang beraosiasi dengan produk, sehingga nantinya ketika kita fetch, data user yang membuat produk tersimpan dan hanya menampilkan produk yang dibuat oleh user yang sedang login
